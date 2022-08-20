@@ -1,8 +1,8 @@
-let productData = [];
+let productData = []; /*création d'un tableau*/
 
 const fetchProduct = async () => {
     await fetch("http://localhost:3000/api/products")
-        .then((res) => res.json)
+        .then((res) => res.json())
         .then((promise)=> {
             productData = promise;
             console.log(productData);
@@ -10,13 +10,16 @@ const fetchProduct = async () => {
     );
 };
 
-const productDisplay = async () => {
+fetchProduct()
+/*affichage des items sur le site*/
+
+const productDisplay = async () => { 
     await fetchProduct();
 
-    document.getElementById("Items").innerHTML = productData.map((product) => `
+    document.getElementById("items").innerHTML = productData.map((product) => `
         <a href="./product.html?id=${product._id}">
             <article>
-            <img src=".../${product.imageUrl}.jpg" alt="${product.altTxt}"/>
+            <img src="${product.imageUrl}" alt="${product.altTxt}"/>
             <h3 class="productName">${product.name}</h3>
             <p class="productDescription">${product.description}</p>
             </article>
