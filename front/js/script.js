@@ -16,6 +16,7 @@ fetchProduct()
 const productDisplay = async () => { 
     await fetchProduct();
 
+    /* boucle pour afficheer tous les produits */
     document.getElementById("items").innerHTML = productData.map((product) => `
         <a href="./product.html?id=${product._id}">
             <article>
