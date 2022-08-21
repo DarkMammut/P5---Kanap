@@ -1,19 +1,28 @@
-const product=window.location.search.split("?").join("");
-console.log(product)
+const idProduct=window.location.search.split("?id=").join("");
+console.log(idProduct)
 
-let productData = [];
+let product = [];
 
 const fetchProduct = async () => {
-    await fetch(`http://localhost:3000/api/products/${product}`)
+    await fetch(`http://localhost:3000/api/products/${idProduct}`)
         .then((res) => res.json())
         .then((promise)=> {
-            productData = promise;
-            console.log(productData);
+            product = promise;
+            console.log(product);
+
         }
     );
 };
-const productDisplay = async () => {
+
+async function ProductDisplay() {
     await fetchProduct();
+
+    let image = `<img src="${product.imageUrl}" alt="${product.altTxt}"/>`;
+    console.log(image);
+
+    document.getElementsByClassName('item__img')[0].innerHTML = image;
+
 }
 
-fetchProduct();
+ProductDisplay();
+
