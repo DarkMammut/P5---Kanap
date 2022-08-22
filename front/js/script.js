@@ -10,8 +10,6 @@ const fetchProduct = async () => {
     );
 };
 
-fetchProduct()
-
 /*affichage des items sur le site*/
 
 const productDisplay = async () => { 
@@ -26,7 +24,7 @@ const productDisplay = async () => {
             <p class="productDescription">${product.description}</p>
             </article>
         </a>
-    `)
+    `).join('') /*suppression des virgules*/
 };
 
 productDisplay ();
