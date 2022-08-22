@@ -38,10 +38,37 @@ async function ProductDisplay() {
 
         var select = document.getElementById('colors');
         select.appendChild(createOption);
+
     });
 
-    
+    addBasket(product);
+
 };
 
 ProductDisplay();
+
+const addBasket = () => {
+    let buton = document.getElementById('addToCart')
+    console.log(buton)
+    console.log(idProduct);
+    buton.addEventListener("click",() => {
+        let productArray = JSON.parse(localStorage.getItem('product'));
+        let select = document.getElementById('colors');
+        console.log(select.value);
+        console.log(productArray);
+
+        const productColor = Object.assign({}, product, {
+            color: `${select.value}`,
+            quantity: 1,
+        });
+        console.log(productColor)
+
+        if (productArray == null) {
+            productArray = [];
+            productArray.push(productColor);
+            console.log(productArray);
+            localStorage.setItem('product',JSON.stringify(productArray));
+        };
+    });
+};
 
