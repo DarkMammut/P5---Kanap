@@ -21,21 +21,21 @@ async function productDisplay() {
     document.querySelector('title').textContent = `${product.name}`;
 
     let createImg = document.createElement("img");
-    createImg.src = `${product.imageUrl}`;
-    createImg.alt = `${product.altTxt}`;
+    createImg.src = product.imageUrl;
+    createImg.alt = product.altTxt;
     document.getElementsByClassName('item__img')[0].appendChild(createImg);
     
-    document.getElementById('title').innerText = `${product.name}`;
-    document.getElementById('description').innerText = `${product.description}`;
-    document.getElementById('price').innerText = `${product.price}`;
+    document.getElementById('title').innerText = product.name;
+    document.getElementById('description').innerText = product.description;
+    document.getElementById('price').innerText = product.price;
 
     console.log(product.colors)
 
     product.colors.forEach((color) => {
         let createOption = document.createElement("option");
 
-        createOption.innerText = `${color}`;
-        createOption.value = `${color}`;
+        createOption.innerText = color;
+        createOption.value = color;
 
         var select = document.getElementById('colors');
         select.appendChild(createOption);

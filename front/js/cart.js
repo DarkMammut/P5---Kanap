@@ -1,6 +1,19 @@
 let addProduct = JSON.parse(localStorage.getItem('product'));
 console.log(addProduct);
 
+let productData = []; /*création d'un array*/
+
+/*récupération des données du serveur et intégration des données dans le array créé précédemment*/
+const fetchProduct = async () => {
+    await fetch("http://localhost:3000/api/products")
+        .then((res) => res.json())
+        .then((promise)=> {
+            productData = promise;
+            console.log(productData);
+        }
+    );
+};
+
 const cartDisplay = async () => {
     if(addProduct) {
         await addProduct;

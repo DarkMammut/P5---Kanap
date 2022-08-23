@@ -16,20 +16,32 @@ const fetchProduct = async () => {
 const productDisplay = async () => { 
     await fetchProduct();
 
-    /* boucle pour créer du HTML pour chaque produit*/
-    document.getElementById("items").innerHTML = productData.map((product) => `
-        <a href="./product.html?id=${product._id}">
-            <article>
-            <img src="${product.imageUrl}" alt="${product.altTxt}"/>
-            <h3 class="productName">${product.name}</h3>
-            <p class="productDescription">${product.description}</p>
-            </article>
-        </a>
-    `).join('') /*suppression des virgules*/
+    productData.forEach((product) => {
+        var select = document.getElementById('items');
 
-    for (let i = 0; i < productData.length; i++) {
-        str = str + i;
-      }
+        var a = document.createElement("a");
+        a.href = `./product.html?id=${product._id}`;
+
+        var article = document.createElement("article");
+
+        var img = document.createElement("img");
+        img.src = product.imageUrl;
+        img.alt = product.altTxt;
+
+        var title = document.createElement("h3");
+        title.className = "productName";
+        title.innerText = product.name;
+
+        var p = document.createElement("p");
+        p.className = "productDescription";
+        p.innerText = product.description;
+
+        article.appendChild(img);
+        article.appendChild(title);
+        article.appendChild(p);
+        a.appendChild(article);
+        select.appendChild(a);
+    });
 };
 
 productDisplay ();
