@@ -1,5 +1,6 @@
-let productData = []; /*création d'un tableau*/
+let productData = []; /*création d'un array*/
 
+/*récupération des données du serveur et intégration des données dans le array créé précédemment*/
 const fetchProduct = async () => {
     await fetch("http://localhost:3000/api/products")
         .then((res) => res.json())
@@ -25,6 +26,10 @@ const productDisplay = async () => {
             </article>
         </a>
     `).join('') /*suppression des virgules*/
+
+    for (let i = 0; i < productData.length; i++) {
+        str = str + i;
+      }
 };
 
 productDisplay ();
