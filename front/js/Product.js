@@ -2,6 +2,7 @@ const idProduct=window.location.search.split("?id=").join("");
 console.log(idProduct)
 
 let product = [];
+let msg = "";
 
 const fetchProduct = async () => {
     await fetch(`http://localhost:3000/api/products/${idProduct}`)
@@ -54,21 +55,47 @@ const addBasket = () => {
     buton.addEventListener("click",() => {
         let productArray = JSON.parse(localStorage.getItem('product'));
         let select = document.getElementById('colors');
+        let qty = document.getElementById('quantity');
+
         console.log(select.value);
-        console.log(productArray);
+        console.log(qty.value);
 
         const productColor = Object.assign({}, product, {
             color: `${select.value}`,
-            quantity: 1,
+            quantity: Number(`${qty.value}`),
         });
-        console.log(productColor)
 
-        if (productArray == null) {
-            productArray = [];
-            productArray.push(productColor);
-            console.log(productArray);
-            localStorage.setItem('product',JSON.stringify(productArray));
+        console.log(productColor);
+
+        if (Number(qty.value) > 0) {
+            console.log("OK")
+            for(let i=0; i<product.colors.length; i++) {
+                if (select.value === product.colors[i]) {
+                    console.log("OK")
+                    if (productArray == null) {
+                        productArray = [];
+                        productArray.push(productColor);
+                        console.log(productArray);
+                        localStorage.setItem('product',JSON.stringify(productArray));
+                    } else {
+                        productArray.push(productColor);
+                        console.log(productArray);
+                        localStorage.setItem('product',JSON.stringify(productArray));
+                    };
+                    break
+                } else {
+                    let msg = "La couleur renseignée est incorrecte !"
+                    alert(msg);
+                    console.log(msg)
+                };
+            };
+        } else {
+            let msg = "La quantité renseignée est incorrecte !"
+            alert(msg);
+            console.log(msg)
         };
+
+        
     });
 };
 
