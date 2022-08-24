@@ -15,6 +15,65 @@ const fetchProduct = async () => {
     );
 };
 
+function saveCart(cart) {
+    localStorage.setItem("cart", JSON.stringify(cart))
+}
+
+function getCart() {
+    let cart = localStorage.getItem("cart");
+    if (cart == null) {
+        return [];
+    } else {
+        return JSON.parse(cart);
+    }
+}
+
+const addCart = () => {
+    let button = document.getElementById('addToCart');
+    console.log(idProduct);
+    button.addEventListener("click",() => {
+        let quantity = Number(document.getElementById("quantity").value);
+        let color = document.getElementById("colors").value;
+        let cart = getCart();
+        let key = idProduct + color;
+        let findProduct = cart.find(p => p.key == key);
+
+        console.log(color);
+
+        if(color !== "") {
+            if(quantity > 0) {
+                if(findProduct !== undefined) {
+                    console.log(findProduct);
+                    findProduct.quantity = findProduct.quantity + quantity;
+                } else if(cart.length == 0) {
+                    let newProduct = Object.assign({}, cart, {
+                        key: key,
+                        _id: idProduct,
+                        color: color,
+                        quantity: quantity,
+                    });
+                    cart.push(newProduct);
+                } else {
+                    let newProduct = {
+                        key: key,
+                        _id: idProduct,
+                        color: color,
+                        quantity: quantity,
+                    };
+                    cart.push(newProduct);
+                };
+            }else {
+                alert("Merci d'indiquer une quantité supérieur à 0")
+            };
+        } else {
+            alert("Merci d'indiquer une couleur.")
+        };
+        saveCart(cart);
+
+        console.log(cart);
+    });
+};
+
 async function productDisplay() {
     await fetchProduct();
 
@@ -47,43 +106,3 @@ async function productDisplay() {
 };
 
 productDisplay();
-
-const addCart = () => {
-    let button = document.getElementById('addToCart');
-    console.log(idProduct);
-    button.addEventListener("click",() => {
-        let select = document.getElementById('colors');
-        let qty = document.getElementById('quantity');
-
-        console.log(select.value);
-        console.log(qty.value);
-
-        console.log(productColor);
-
-        if (Number(qty.value) > 0) {
-                if (select.value !== '') {
-                    const productColor = Object.assign({}, product, {
-                        color: `${select.value}`,
-                        quantity: Number(`${qty.value}`),
-                    });
-                    if (productArray == null) {
-                        productArray = [];
-                        productArray.push(productColor);
-                        console.log(productArray);
-                        localStorage.setItem('product',JSON.stringify(productArray));
-                    } else {
-                        productArray.push(productColor);
-                        console.log(productArray);
-                        localStorage.setItem('product',JSON.stringify(productArray));
-                    };
-                } else {
-                    let msg = "La couleur renseignée est incorrecte !"
-                    alert(msg);
-                };
-        } else {
-            let msg = "La quantité renseignée est incorrecte !"
-            alert(msg);
-        };
-    });
-};
-
