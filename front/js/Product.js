@@ -2,7 +2,6 @@ const idProduct=window.location.search.split("?id=").join("");
 console.log(idProduct)
 
 let product = {};
-let msg = "";
 
 const fetchProduct = async () => {
     await fetch(`http://localhost:3000/api/products/${idProduct}`)
