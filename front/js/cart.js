@@ -24,9 +24,20 @@ function saveCart(cart) {
 
 function deleteItem(key,divDelete) {
     let cart = getCart();
-    let findProduct = cart.find(product => product.key === key);
     divDelete.addEventListener("click",() => {
-        localStorage.clear();
+        let findProduct = cart.find(product => product.key === key);
+        let removeIndex = cart.indexOf(findProduct);
+        if (cart.lenght > 1) {
+            if (removeIndex !== -1) {
+                cart.splice(removeIndex, 1);
+                saveCart(cart);
+            };
+        } else {
+            cart.splice(removeIndex, 1);
+            localStorage.clear();
+        };
+        let removeHTML = divDelete.closest('article');
+        removeHTML.remove();
         calculateTotal(cart,productData);
     });
 }
@@ -138,6 +149,104 @@ function writeHTML(findProduct,cartProduct) {
     select.appendChild(article);
 }
 
+function validateNames(string) {
+    var reg = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+  
+    if (!reg.test(string)) {
+      return false;
+    }
+}
+
+function validateAddress(string) {
+    var reg = /^[a-zA-Z0-9\s,'-]*$/;
+  
+    if (!reg.test(string)) {
+      return false;
+    }
+}
+
+function validateCity(string) {
+    var reg = /^([a-zA-Z\u0080-\u024F]+(?:. |-| |'))*[a-zA-Z\u0080-\u024F]*$/;
+  
+    if (!reg.test(string)) {
+      return false;
+    }
+}
+
+function validateEmail(mail) {
+    var reg = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+    if(!reg.test(mail)) {
+        return (false)
+    };
+}
+
+const validateForm = async () => {
+    document.getElementById("firstName").addEventListener("change",function(event) {
+        let firstName = String(event.target.value);
+        if (firstName.length > 1) {
+            if(validateNames(firstName) == false) {
+                document.getElementById("firstNameErrorMsg").innerText = "Merci de renseigner votre prénom sans chiffres et sans caractères spéciaux"
+            } else {
+                document.getElementById("firstNameErrorMsg").innerText = ""
+            };
+        } else {
+            document.getElementById("firstNameErrorMsg").innerText = "Votre prénom doit contenir au moins 2 caractères"
+        };
+    });
+
+    document.getElementById("lastName").addEventListener("change",function(event) {
+        let lastName = String(event.target.value);
+        if (lastName.length > 1) {
+            if(validateNames(lastName) == false) {
+                document.getElementById("lastNameErrorMsg").innerText = "Merci de renseigner votre nom sans chiffres et sans caractères spéciaux"
+            } else {
+                document.getElementById("lastNameErrorMsg").innerText = ""
+            };
+        } else {
+            document.getElementById("lastNameErrorMsg").innerText = "Votre nom doit contenir au moins 2 caractères"
+        };
+    });
+
+    document.getElementById("addresse").addEventListener("change",function(event) {
+        let address = String(event.target.value);
+        if (address.length > 1) {
+            if(validateAddress(address) == false) {
+                document.getElementById("addressErrorMsg").innerText = "Merci de renseigner une adresse valide"
+            } else {
+                document.getElementById("addressErrorMsg").innerText = ""
+            };
+        } else {
+            document.getElementById("addressErrorMsg").innerText = "Merci de renseigner une adresse complète"
+        };
+    });
+
+    document.getElementById("city").addEventListener("change",function(event) {
+        let city = String(event.target.value);
+        if (city.length > 1) {
+            if(validateNames(city) == false) {
+                document.getElementById("cityErrorMsg").innerText = "Merci de renseigner une ville valide"
+            } else {
+                document.getElementById("cityErrorMsg").innerText = ""
+            };
+        } else {
+            document.getElementById("cityErrorMsg").innerText = "Votre ville doit contenir au moins 2 caractères"
+        };
+    });
+
+    document.getElementById("email").addEventListener("change",function(event) {
+        let email = String(event.target.value);
+        if (email.length > 5) {
+            if(validateEmail(email) == false) {
+                document.getElementById("emailErrorMsg").innerText = "Merci de renseigner une adresse email valide"
+            } else {
+                document.getElementById("emailErrorMsg").innerText = ""
+            };
+        } else {
+            document.getElementById("emailErrorMsg").innerText = "merci de renseigner une adresse email"
+        };
+    });
+}
+
 const cartDisplay = async () => {
     let cart = getCart();
 
@@ -159,3 +268,4 @@ const cartDisplay = async () => {
 };
 
 cartDisplay();
+validateForm();
