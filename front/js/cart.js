@@ -154,7 +154,7 @@ function validateNames(string) {
   
     if (!reg.test(string)) {
       return false;
-    }
+    };
 }
 
 function validateAddress(string) {
@@ -162,7 +162,7 @@ function validateAddress(string) {
   
     if (!reg.test(string)) {
       return false;
-    }
+    };
 }
 
 function validateCity(string) {
@@ -170,13 +170,13 @@ function validateCity(string) {
   
     if (!reg.test(string)) {
       return false;
-    }
+    };
 }
 
-function validateEmail(mail) {
+function validateEmail(email) {
     var reg = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
-    if(!reg.test(mail)) {
-        return (false)
+    if(!reg.test(email)) {
+        return false;
     };
 }
 
@@ -207,7 +207,7 @@ const validateForm = async () => {
         };
     });
 
-    document.getElementById("addresse").addEventListener("change",function(event) {
+    document.getElementById("address").addEventListener("change",function(event) {
         let address = String(event.target.value);
         if (address.length > 1) {
             if(validateAddress(address) == false) {
@@ -236,6 +236,7 @@ const validateForm = async () => {
     document.getElementById("email").addEventListener("change",function(event) {
         let email = String(event.target.value);
         if (email.length > 5) {
+            console.log(validateEmail(email))
             if(validateEmail(email) == false) {
                 document.getElementById("emailErrorMsg").innerText = "Merci de renseigner une adresse email valide"
             } else {
@@ -256,11 +257,6 @@ const cartDisplay = async () => {
 
     cart.forEach((cartProduct) => {
         let findProduct = productData.find(product => product._id === cartProduct._id);
-        
-        console.log(productData)
-        console.log(cartProduct._id);
-        console.log(findProduct);
-
         writeHTML(findProduct,cartProduct);
     });
 
@@ -269,3 +265,46 @@ const cartDisplay = async () => {
 
 cartDisplay();
 validateForm();
+
+const order = (firstNameValue,lastNameValue,addressValue,cityValue,emailValue) => {
+    let orderBtn = document.getElementById("order");
+    orderBtn.addEventListener("click", function(event) {
+        let cart = getCart();
+        if (cart.length > 0) {
+            if(firstNameValue && lastNameValue && addressValue && cityValue && emailValue) {
+                let orderProducts = [];
+                cart.forEach((product) => {
+                    orderProducts.push(product._id)
+                })
+                let data = {
+                    contact: {
+                    firstName: firstNameValue,
+                    lastName: lastNameValue,
+                    address: addressValue,
+                    city: cityValue,
+                    email: emailValue,
+                    },
+                    products: orderProducts,
+                };
+
+                fetch("http://localhost:3000/api/order", {
+                    method: "POST",
+                    headers: {"Content-Type":"application/json"},
+                    body: JSON.stringify(data),
+                })
+                // Converting to JSON
+                .then(response => response.json())
+ 
+                // Displaying results to console
+                .then(json => console.log(json));
+
+                window.location.href = "./confirmation.html";
+
+            } else {
+                alert("merci de remplir le formulaire de contact");
+            }
+        } else {
+            alert("votre panier est vide")
+        }
+    });
+}
