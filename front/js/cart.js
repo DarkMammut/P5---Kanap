@@ -96,7 +96,7 @@ function writeHTML(findProduct,cartProduct) {
     p1.innerText = cartProduct.color;
 
     var p2 = document.createElement("p");
-    p2.innerText = findProduct.price;
+    p2.innerText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(findProduct.price);
 
     var divSettings = document.createElement("div");
     divSettings.className = "cart__item__content__settings";
@@ -180,74 +180,6 @@ function validateEmail(email) {
     };
 }
 
-const validateForm = async () => {
-    document.getElementById("firstName").addEventListener("change",function(event) {
-        let firstName = String(event.target.value);
-        if (firstName.length > 1) {
-            if(validateNames(firstName) == false) {
-                document.getElementById("firstNameErrorMsg").innerText = "Merci de renseigner votre prénom sans chiffres et sans caractères spéciaux"
-            } else {
-                document.getElementById("firstNameErrorMsg").innerText = ""
-            };
-        } else {
-            document.getElementById("firstNameErrorMsg").innerText = "Votre prénom doit contenir au moins 2 caractères"
-        };
-    });
-
-    document.getElementById("lastName").addEventListener("change",function(event) {
-        let lastName = String(event.target.value);
-        if (lastName.length > 1) {
-            if(validateNames(lastName) == false) {
-                document.getElementById("lastNameErrorMsg").innerText = "Merci de renseigner votre nom sans chiffres et sans caractères spéciaux"
-            } else {
-                document.getElementById("lastNameErrorMsg").innerText = ""
-            };
-        } else {
-            document.getElementById("lastNameErrorMsg").innerText = "Votre nom doit contenir au moins 2 caractères"
-        };
-    });
-
-    document.getElementById("address").addEventListener("change",function(event) {
-        let address = String(event.target.value);
-        if (address.length > 1) {
-            if(validateAddress(address) == false) {
-                document.getElementById("addressErrorMsg").innerText = "Merci de renseigner une adresse valide"
-            } else {
-                document.getElementById("addressErrorMsg").innerText = ""
-            };
-        } else {
-            document.getElementById("addressErrorMsg").innerText = "Merci de renseigner une adresse complète"
-        };
-    });
-
-    document.getElementById("city").addEventListener("change",function(event) {
-        let city = String(event.target.value);
-        if (city.length > 1) {
-            if(validateNames(city) == false) {
-                document.getElementById("cityErrorMsg").innerText = "Merci de renseigner une ville valide"
-            } else {
-                document.getElementById("cityErrorMsg").innerText = ""
-            };
-        } else {
-            document.getElementById("cityErrorMsg").innerText = "Votre ville doit contenir au moins 2 caractères"
-        };
-    });
-
-    document.getElementById("email").addEventListener("change",function(event) {
-        let email = String(event.target.value);
-        if (email.length > 5) {
-            console.log(validateEmail(email))
-            if(validateEmail(email) == false) {
-                document.getElementById("emailErrorMsg").innerText = "Merci de renseigner une adresse email valide"
-            } else {
-                document.getElementById("emailErrorMsg").innerText = ""
-            };
-        } else {
-            document.getElementById("emailErrorMsg").innerText = "merci de renseigner une adresse email"
-        };
-    });
-}
-
 const cartDisplay = async () => {
     let cart = getCart();
 
@@ -263,42 +195,138 @@ const cartDisplay = async () => {
     calculateTotal(cart,productData);
 };
 
-cartDisplay();
-validateForm();
+const validateForm = async () => {
+    const contact = {
+        firstName: "",
+        lastName: "",
+        address: "",
+        city: "",
+        email: "",
+    };
 
-const order = (firstNameValue,lastNameValue,addressValue,cityValue,emailValue) => {
-    let orderBtn = document.getElementById("order");
-    orderBtn.addEventListener("click", function(event) {
+    document.getElementById("firstName").addEventListener("change",function(event) {
+        let firstName = String(event.target.value);
+        if (firstName.length > 1) {
+            if(validateNames(firstName) == false) {
+                document.getElementById("firstNameErrorMsg").innerText = "Merci de renseigner votre prénom sans chiffres et sans caractères spéciaux";
+                contact.firstName = "";
+            } else {
+                document.getElementById("firstNameErrorMsg").innerText = "";
+                contact.firstName = firstName;
+            };
+        } else {
+            document.getElementById("firstNameErrorMsg").innerText = "Votre prénom doit contenir au moins 2 caractères";
+            contact.firstName = "";
+        };
+    });
+
+    document.getElementById("lastName").addEventListener("change",function(event) {
+        let lastName = String(event.target.value);
+        if (lastName.length > 1) {
+            if(validateNames(lastName) == false) {
+                document.getElementById("lastNameErrorMsg").innerText = "Merci de renseigner votre nom sans chiffres et sans caractères spéciaux";
+                contact.lastName = "";
+            } else {
+                document.getElementById("lastNameErrorMsg").innerText = "";
+                contact.lastName = lastName;
+            };
+        } else {
+            document.getElementById("lastNameErrorMsg").innerText = "Votre nom doit contenir au moins 2 caractères";
+            contact.lastName = "";
+        };
+    });
+
+    document.getElementById("address").addEventListener("change",function(event) {
+        let address = String(event.target.value);
+        if (address.length > 1) {
+            if(validateAddress(address) == false) {
+                document.getElementById("addressErrorMsg").innerText = "Merci de renseigner une adresse valide";
+                contact.address = "";
+            } else {
+                document.getElementById("addressErrorMsg").innerText = "";
+                contact.address = address;
+            };
+        } else {
+            document.getElementById("addressErrorMsg").innerText = "Merci de renseigner une adresse complète";
+            contact.address = "";
+        };
+    });
+
+    document.getElementById("city").addEventListener("change",function(event) {
+        let city = String(event.target.value);
+        if (city.length > 1) {
+            if(validateNames(city) == false) {
+                document.getElementById("cityErrorMsg").innerText = "Merci de renseigner une ville valide";
+                contact.city = "";
+            } else {
+                document.getElementById("cityErrorMsg").innerText = "";
+                contact.city = city;
+            };
+        } else {
+            document.getElementById("cityErrorMsg").innerText = "Votre ville doit contenir au moins 2 caractères";
+            contact.city = "";
+        };
+    });
+
+    document.getElementById("email").addEventListener("change",function(event) {
+        let email = String(event.target.value);
+        if (email.length > 5) {
+            if(validateEmail(email) == false) {
+                document.getElementById("emailErrorMsg").innerText = "Merci de renseigner une adresse email valide";
+                contact.email = "";
+            } else {
+                document.getElementById("emailErrorMsg").innerText = "";
+                contact.email = email;
+                console.log(contact);
+            };
+        } else {
+            document.getElementById("emailErrorMsg").innerText = "merci de renseigner une adresse email";
+            contact.email = "";
+        };
+    });
+
+    document.getElementById("order").addEventListener("click", function(event) {
+        event.preventDefault();
         let cart = getCart();
         if (cart.length > 0) {
-            if(firstNameValue && lastNameValue && addressValue && cityValue && emailValue) {
+            console.log(contact.firstName);
+            if(contact.firstName !== "" && contact.lastName !== "" && contact.address !== "" && contact.city !== "" && contact.email !== "") {
                 let orderProducts = [];
                 cart.forEach((product) => {
-                    orderProducts.push(product._id)
-                })
-                let data = {
-                    contact: {
-                    firstName: firstNameValue,
-                    lastName: lastNameValue,
-                    address: addressValue,
-                    city: cityValue,
-                    email: emailValue,
-                    },
+                    orderProducts.push(product._id);
+                });
+                let clientOrder = {
+                    contact: contact,
                     products: orderProducts,
                 };
 
-                fetch("http://localhost:3000/api/order", {
-                    method: "POST",
-                    headers: {"Content-Type":"application/json"},
-                    body: JSON.stringify(data),
-                })
-                // Converting to JSON
-                .then(response => response.json())
- 
-                // Displaying results to console
-                .then(json => console.log(json));
+                console.log(clientOrder);
 
-                window.location.href = "./confirmation.html";
+                const res = async () => {
+                    await fetch("http://localhost:3000/api/products/order", {
+                        method: "POST",
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(clientOrder)
+                    });
+                ;}
+                console.log("la requête cart.js est opérationelle.");
+
+                const serverValue = async () => {
+                    await res.json();
+                }
+
+                if(serverValue) {
+                    sessionStorage.setItem('orderId', serverValue.orderId);
+                    console.log(sessionStorage.getItem('orderID'));
+                } else {
+                    alert("Une erreur est survenue. Veuillez réessayer ultérieurement.");
+                }
+                console.log(sessionStorage.getItem('orderId'));
+
+                //document.location.href = "./confirmation.html";
 
             } else {
                 alert("merci de remplir le formulaire de contact");
@@ -308,3 +336,6 @@ const order = (firstNameValue,lastNameValue,addressValue,cityValue,emailValue) =
         }
     });
 }
+
+cartDisplay();
+validateForm();

@@ -1,8 +1,11 @@
+/*get product-id in URL*/
 const idProduct=window.location.search.split("?id=").join("");
 console.log(idProduct)
 
-let product = {};
+let product = {}; //create an object//
 
+/*fetch server 
+get array (productData) of all products*/
 const fetchProduct = async () => {
     await fetch(`http://localhost:3000/api/products/${idProduct}`)
         .then((res) => res.json())
@@ -14,10 +17,17 @@ const fetchProduct = async () => {
     );
 };
 
+/*
+* add products in "cart" in localStorage 
+* @param {object} cart
+*/
 function saveCart(cart) {
     localStorage.setItem("cart", JSON.stringify(cart))
 }
 
+/*
+* get products in "cart" from localStorage and put result in an array
+*/
 function getCart() {
     let cart = localStorage.getItem("cart");
     if (cart == null) {
