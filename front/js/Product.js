@@ -5,14 +5,13 @@ console.log(idProduct)
 let product = {}; //create an object//
 
 /*fetch server 
-get array (productData) of all products*/
+get object (product) from idproduct*/
 const fetchProduct = async () => {
     await fetch(`http://localhost:3000/api/products/${idProduct}`)
         .then((res) => res.json())
         .then((promise)=> {
             product = promise;
             console.log(product);
-
         }
     );
 };

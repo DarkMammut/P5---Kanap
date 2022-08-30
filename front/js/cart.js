@@ -1,5 +1,7 @@
-let productData = []; /*création d'un array*/
-/*récupération des données du serveur et intégration des données dans le array créé précédemment*/
+let productData = []; //create an array//
+
+/*fetch server 
+get array (productData) of all products*/
 const fetchProduct = async () => {
     await fetch("http://localhost:3000/api/products")
         .then((res) => res.json())
@@ -9,6 +11,7 @@ const fetchProduct = async () => {
     );
 };
 
+/*get products in "cart" from localStorage and put result in an array*/
 function getCart() {
     let cart = localStorage.getItem("cart");
     if (cart == null) {
@@ -18,10 +21,19 @@ function getCart() {
     }
 }
 
+/*
+* add products in "cart" in localStorage 
+* @param {object} cart
+*/
 function saveCart(cart) {
     localStorage.setItem("cart", JSON.stringify(cart))
 }
 
+/*
+* delete products in "cart" in localStorage 
+* @param {string} key
+* @param {string} divDelete (HTML)
+*/
 function deleteItem(key,divDelete) {
     let cart = getCart();
     divDelete.addEventListener("click",() => {
@@ -42,6 +54,11 @@ function deleteItem(key,divDelete) {
     });
 }
 
+/*
+* change quantity products in "cart" in localStorage 
+* @param {string} key
+* @param {string} input (HTML)
+*/
 function changeQuantity(input,key) {
     input.addEventListener("change",function(event) {
         let cart = getCart();
@@ -52,12 +69,17 @@ function changeQuantity(input,key) {
     });
 }
 
+/*
+* change total quantity and total amount in HTML
+* @param {array} cart
+* @param {array} productData
+*/
 function calculateTotal(cart,productData) {
     let totalQuantity = 0;
     let price = 0;
     let amount = 0;
     let totalAmount = 0;
-    cart.forEach((cartProduct) => {
+    cart.forEach((cartProduct) => { //add quantity and amount for each product in cart
         totalQuantity += Number(cartProduct.quantity);
         let findProduct = productData.find(product => product._id === cartProduct._id);
         price = Number(findProduct.price);
@@ -68,6 +90,11 @@ function calculateTotal(cart,productData) {
     document.getElementById("totalPrice").innerText = totalAmount;
 }
 
+/*
+* add HTML in <section id="cart__items">...</section>
+* @param {object} findProduct
+* @param {array} cartProduct
+*/
 function writeHTML(findProduct,cartProduct) {
     var select = document.getElementById('cart__items');
 
@@ -149,30 +176,46 @@ function writeHTML(findProduct,cartProduct) {
     select.appendChild(article);
 }
 
-function validateNames(string) {
+/*
+* validate RegEx for names
+* @param {string} name
+*/
+function validateNames(name) {
     var reg = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
   
-    if (!reg.test(string)) {
+    if (!reg.test(name)) {
       return false;
     };
 }
 
-function validateAddress(string) {
+/*
+* validate RegEx for address
+* @param {string} address
+*/
+function validateAddress(address) {
     var reg = /^[a-zA-Z0-9\s,'-]*$/;
   
-    if (!reg.test(string)) {
+    if (!reg.test(address)) {
       return false;
     };
 }
 
-function validateCity(string) {
+/*
+* validate RegEx for city
+* @param {string} city
+*/
+function validateCity(city) {
     var reg = /^([a-zA-Z\u0080-\u024F]+(?:. |-| |'))*[a-zA-Z\u0080-\u024F]*$/;
   
-    if (!reg.test(string)) {
+    if (!reg.test(city)) {
       return false;
     };
 }
 
+/*
+* validate RegEx for email
+* @param {string} email
+*/
 function validateEmail(email) {
     var reg = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
     if(!reg.test(email)) {
@@ -187,7 +230,7 @@ const cartDisplay = async () => {
     
     console.log(cart);
 
-    cart.forEach((cartProduct) => {
+    cart.forEach((cartProduct) => { //for each product in product find it in server and add HTML
         let findProduct = productData.find(product => product._id === cartProduct._id);
         writeHTML(findProduct,cartProduct);
     });
@@ -196,7 +239,7 @@ const cartDisplay = async () => {
 };
 
 const validateForm = async () => {
-    const contact = {
+    const contact = { //add object {contact}
         firstName: "",
         lastName: "",
         address: "",
@@ -204,7 +247,7 @@ const validateForm = async () => {
         email: "",
     };
 
-    document.getElementById("firstName").addEventListener("change",function(event) {
+    document.getElementById("firstName").addEventListener("change",function(event) { //when value of input changes validate RegEX
         let firstName = String(event.target.value);
         if (firstName.length > 1) {
             if(validateNames(firstName) == false) {
@@ -220,7 +263,7 @@ const validateForm = async () => {
         };
     });
 
-    document.getElementById("lastName").addEventListener("change",function(event) {
+    document.getElementById("lastName").addEventListener("change",function(event) { //when value of input changes validate RegEX
         let lastName = String(event.target.value);
         if (lastName.length > 1) {
             if(validateNames(lastName) == false) {
@@ -236,7 +279,7 @@ const validateForm = async () => {
         };
     });
 
-    document.getElementById("address").addEventListener("change",function(event) {
+    document.getElementById("address").addEventListener("change",function(event) { //when value of input changes validate RegEX
         let address = String(event.target.value);
         if (address.length > 1) {
             if(validateAddress(address) == false) {
@@ -252,7 +295,7 @@ const validateForm = async () => {
         };
     });
 
-    document.getElementById("city").addEventListener("change",function(event) {
+    document.getElementById("city").addEventListener("change",function(event) { //when value of input changes validate RegEX
         let city = String(event.target.value);
         if (city.length > 1) {
             if(validateNames(city) == false) {
@@ -268,7 +311,7 @@ const validateForm = async () => {
         };
     });
 
-    document.getElementById("email").addEventListener("change",function(event) {
+    document.getElementById("email").addEventListener("change",function(event) { //when value of input changes validate RegEX
         let email = String(event.target.value);
         if (email.length > 5) {
             if(validateEmail(email) == false) {
@@ -286,10 +329,9 @@ const validateForm = async () => {
     });
 
     document.getElementById("order").addEventListener("click", function(event) {
-        event.preventDefault();
+        event.preventDefault(); //do not allow to change URL
         let cart = getCart();
         if (cart.length > 0) {
-            console.log(contact.firstName);
             if(contact.firstName !== "" && contact.lastName !== "" && contact.address !== "" && contact.city !== "" && contact.email !== "") {
                 let orderProducts = [];
                 cart.forEach((product) => {
@@ -318,12 +360,15 @@ const validateForm = async () => {
                     await res.json();
                 }
 
+                console.log(serverValue)
+
                 if(serverValue) {
                     sessionStorage.setItem('orderId', serverValue.orderId);
                     console.log(sessionStorage.getItem('orderID'));
                 } else {
                     alert("Une erreur est survenue. Veuillez réessayer ultérieurement.");
                 }
+
                 console.log(sessionStorage.getItem('orderId'));
 
                 //document.location.href = "./confirmation.html";
