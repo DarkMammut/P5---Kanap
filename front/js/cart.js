@@ -328,18 +328,23 @@ const validateForm = async () => {
     document.getElementById("order").addEventListener("click", function(event) {
         event.preventDefault(); //do not allow to change URL
         let cart = getCart();
-        if (cart.length > 0) {
+        if (Object.keys(cart).length > 0) {
             if(contact.firstName !== "" && contact.lastName !== "" && contact.address !== "" && contact.city !== "" && contact.email !== "") {
+                
                 let orderProducts = [];
-                cart.forEach((product) => {
-                    orderProducts.push(product._id);
-                });
+
+                for (const [key, value] of Object.entries(cart)) { //add quantity and amount for each product in cart
+                    orderProducts.push(value._id);
+                };
+
                 let clientOrder = {
                     contact: contact,
                     products: orderProducts,
                 };
 
                 console.log(clientOrder);
+
+                ordering();
 
                 const res = async () => {
                     await fetch("http://localhost:3000/api/products/order", {
@@ -350,15 +355,16 @@ const validateForm = async () => {
                         },
                         body: JSON.stringify(clientOrder)
                     });
+                    console.log("la requête est opérationelle.");
                 ;}
-                console.log("la requête cart.js est opérationelle.");
 
-                const serverValue = async () => {
+                const ordering = async () => {
                     let results = await res();
                     let result = results.json(); 
 
                     if(result) {
                         //document.location.href = "./confirmation.html/$";
+                        console.log("hello")
                     } else {
                         alert("Une erreur est survenue. Veuillez réessayer ultérieurement.");
                     };
