@@ -30,7 +30,7 @@ function saveCart(cart) {
 function getCart() {
     let cart = localStorage.getItem("cart");
     if (cart == null) {
-        return [];
+        return {};
     } else {
         return JSON.parse(cart);
     }
@@ -44,31 +44,20 @@ const addCart = () => {
         let color = document.getElementById("colors").value;
         let cart = getCart();
         let key = idProduct + color;
-        let findProduct = cart.find(p => p.key == key);
-
-        console.log(color);
+        let findProduct = cart[key];
 
         if(color !== "") {
             if(quantity > 0) {
-                if(findProduct !== undefined) {
+                if(!cart) {cart={}};
+                if(findProduct) {
                     console.log(findProduct);
-                    findProduct.quantity = findProduct.quantity + quantity;
-                } else if(cart.length == 0) {
-                    let newProduct = Object.assign({}, cart, {
-                        key: key,
-                        _id: idProduct,
-                        color: color,
-                        quantity: quantity,
-                    });
-                    cart.push(newProduct);
+                    cart[key].quantity += quantity;
                 } else {
-                    let newProduct = {
-                        key: key,
+                    cart[key] = {
                         _id: idProduct,
                         color: color,
                         quantity: quantity,
                     };
-                    cart.push(newProduct);
                 };
             }else {
                 alert("Merci d'indiquer une quantité supérieur à 0")

@@ -1,21 +1,25 @@
-let productData = []; //create an array//
+async function fetchProduct(idProduct) {
+    let productData = {}; //create an object//
 
-/*fetch server 
-get array (productData) of all products*/
-const fetchProduct = async () => {
-    await fetch("http://localhost:3000/api/products")
-        .then((res) => res.json())
-        .then((promise)=> {
-            productData = promise;
-        }
-    );
+    /*fetch server 
+    get object (productData) from idproduct*/
+    const fetchProductData = async () => {
+        await fetch(`http://localhost:3000/api/products/${idProduct}`)
+            .then((res) => res.json())
+            .then((promise)=> {
+                productData = promise;
+            }
+        );
+    };
+    await fetchProductData();
+    return productData
 };
 
 /*get products in "cart" from localStorage and put result in an array*/
 function getCart() {
     let cart = localStorage.getItem("cart");
     if (cart == null) {
-        return [];
+        return {};
     } else {
         return JSON.parse(cart);
     }
@@ -34,23 +38,18 @@ function saveCart(cart) {
 * @param {string} key
 * @param {string} divDelete (HTML)
 */
-function deleteItem(key,divDelete) {
+function deleteItem(divDelete,key) {
     let cart = getCart();
     divDelete.addEventListener("click",() => {
-        let findProduct = cart.find(product => product.key === key);
-        let removeIndex = cart.indexOf(findProduct);
-        if (cart.lenght > 1) {
-            if (removeIndex !== -1) {
-                cart.splice(removeIndex, 1);
-                saveCart(cart);
-            };
+        if (Object.keys(cart).length > 1) {
+            delete cart[key];
+            saveCart(cart);
         } else {
-            cart.splice(removeIndex, 1);
             localStorage.clear();
         };
         let removeHTML = divDelete.closest('article');
         removeHTML.remove();
-        calculateTotal(cart,productData);
+        calculateTotal(cart);
     });
 }
 
@@ -62,30 +61,29 @@ function deleteItem(key,divDelete) {
 function changeQuantity(input,key) {
     input.addEventListener("change",function(event) {
         let cart = getCart();
-        let findProduct = cart.find(product => product.key === key);
-        findProduct.quantity = event.target.value;
+        cart[key].quantity = Number(event.target.value);
         saveCart(cart);
-        calculateTotal(cart,productData);
+        calculateTotal(cart);
     });
 }
 
 /*
 * change total quantity and total amount in HTML
 * @param {array} cart
-* @param {array} productData
+* @param {object} productData
 */
-function calculateTotal(cart,productData) {
+async function calculateTotal(cart) {
     let totalQuantity = 0;
-    let price = 0;
-    let amount = 0;
     let totalAmount = 0;
-    cart.forEach((cartProduct) => { //add quantity and amount for each product in cart
-        totalQuantity += Number(cartProduct.quantity);
-        let findProduct = productData.find(product => product._id === cartProduct._id);
-        price = Number(findProduct.price);
-        amount = Number(cartProduct.quantity) * price;
+
+    for (const [key, value] of Object.entries(cart)) { //add quantity and amount for each product in cart
+        let findProduct = await fetchProduct(value._id);
+        totalQuantity += Number(value.quantity);
+        let price = Number(findProduct.price);
+        let amount = Number(value.quantity) * price;
         totalAmount += amount;
-    });
+    };
+
     document.getElementById("totalQuantity").innerText = totalQuantity;
     document.getElementById("totalPrice").innerText = totalAmount;
 }
@@ -95,13 +93,13 @@ function calculateTotal(cart,productData) {
 * @param {object} findProduct
 * @param {array} cartProduct
 */
-function writeHTML(findProduct,cartProduct) {
+function writeHTML(findProduct,product,productKey) {
     var select = document.getElementById('cart__items');
 
     var article = document.createElement("article");
     article.className = "cart__item";
-    article.dataset.id = cartProduct._id;
-    article.dataset.color = cartProduct.color;
+    article.dataset.id = product._id;
+    article.dataset.color = product.color;
 
     var divImg = document.createElement("div");
     divImg.className = "cart__item__img";
@@ -120,7 +118,7 @@ function writeHTML(findProduct,cartProduct) {
     title.innerText = findProduct.name;
 
     var p1 = document.createElement("p");
-    p1.innerText = cartProduct.color;
+    p1.innerText = product.color;
 
     var p2 = document.createElement("p");
     p2.innerText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(findProduct.price);
@@ -140,14 +138,14 @@ function writeHTML(findProduct,cartProduct) {
     input.name= "itemQuantity";
     input.min= "1";
     input.max= "100";
-    input.value= cartProduct.quantity;
+    input.value= product.quantity;
 
-    changeQuantity(input,cartProduct.key);
+    changeQuantity(input,productKey);
 
     var divDelete = document.createElement("div");
     divDelete.className = "cart__item__content__settings__delete";
 
-    deleteItem(cartProduct.key,divDelete);
+    deleteItem(divDelete,productKey);
 
     var p4 = document.createElement("p");
     p4.className = "deleteItem";
@@ -225,17 +223,16 @@ function validateEmail(email) {
 
 const cartDisplay = async () => {
     let cart = getCart();
-
-    await fetchProduct();
-    
     console.log(cart);
 
-    cart.forEach((cartProduct) => { //for each product in product find it in server and add HTML
-        let findProduct = productData.find(product => product._id === cartProduct._id);
-        writeHTML(findProduct,cartProduct);
-    });
+    for (const [key, value] of Object.entries(cart)) { //for each product in cart: find it in server and add HTML
+        let findProduct = await fetchProduct(value._id);
+        console.log(value);
+        console.log(key)
+        writeHTML(findProduct,value,key);
+    };
 
-    calculateTotal(cart,productData);
+    calculateTotal(cart);
 };
 
 const validateForm = async () => {
@@ -357,21 +354,15 @@ const validateForm = async () => {
                 console.log("la requête cart.js est opérationelle.");
 
                 const serverValue = async () => {
-                    await res.json();
-                }
+                    let results = await res();
+                    let result = results.json(); 
 
-                console.log(serverValue)
-
-                if(serverValue) {
-                    sessionStorage.setItem('orderId', serverValue.orderId);
-                    console.log(sessionStorage.getItem('orderID'));
-                } else {
-                    alert("Une erreur est survenue. Veuillez réessayer ultérieurement.");
-                }
-
-                console.log(sessionStorage.getItem('orderId'));
-
-                //document.location.href = "./confirmation.html";
+                    if(result) {
+                        //document.location.href = "./confirmation.html/$";
+                    } else {
+                        alert("Une erreur est survenue. Veuillez réessayer ultérieurement.");
+                    };
+                };
 
             } else {
                 alert("merci de remplir le formulaire de contact");
