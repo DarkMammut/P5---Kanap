@@ -344,7 +344,7 @@ const validateForm = async () => {
 
                 console.log(clientOrder);
 
-                ordering();
+                let order = {};
 
                 const res = async () => {
                     await fetch("http://localhost:3000/api/products/order", {
@@ -354,30 +354,33 @@ const validateForm = async () => {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(clientOrder)
+                    })
+                    .then((res) => res.json())
+                    .then((promise)=> {
+                        order = promise;
+                        console.log(order);
+                        console.log("la requête est opérationelle.");
                     });
-                    console.log("la requête est opérationelle.");
                 ;}
 
                 const ordering = async () => {
-                    let results = await res();
-                    let result = results.json(); 
+                    await res();
 
-                    if(result) {
-                        //document.location.href = "./confirmation.html/$";
-                        console.log("hello")
+                    if(order) {
+                        console.log(order.orderId)
+                        url = `./confirmation.html?order=${order.orderId}`;
+                        window.location.href = url;
                     } else {
                         alert("Une erreur est survenue. Veuillez réessayer ultérieurement.");
                     };
                 };
 
-            } else {
-                alert("merci de remplir le formulaire de contact");
-            }
-        } else {
-            alert("votre panier est vide")
-        }
-    });
-}
+                ordering();
+
+            } else { alert("merci de remplir le formulaire de contact"); };
+        } else { alert("votre panier est vide"); }
+    });   
+};
 
 cartDisplay();
 validateForm();
