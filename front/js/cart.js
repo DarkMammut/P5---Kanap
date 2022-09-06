@@ -179,7 +179,7 @@ function writeHTML(findProduct,product,productKey) {
 * @param {string} name
 */
 function validateNames(name) {
-    var reg = /^[a-zA-\u0080-\u024F ,.'-]+$/;
+    var reg = /^[a-zA-Z\u0080-\u024F ,.'-]+$/;
   
     if (!reg.test(name)) {
       return false;
@@ -191,7 +191,7 @@ function validateNames(name) {
 * @param {string} address
 */
 function validateAddress(address) {
-    var reg = /^[\w ,'-]+$/;
+    var reg = /^[a-zA-Z ,'-]+$/;
   
     if (!reg.test(address)) {
       return false;
