@@ -179,7 +179,7 @@ function writeHTML(findProduct,product,productKey) {
 * @param {string} name
 */
 function validateNames(name) {
-    var reg = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/;
+    var reg = /^[a-zA-\u0080-\u024F ,.'-]+$/;
   
     if (!reg.test(name)) {
       return false;
@@ -191,7 +191,7 @@ function validateNames(name) {
 * @param {string} address
 */
 function validateAddress(address) {
-    var reg = /^[a-zA-Z0-9\s,'-]*$/;
+    var reg = /^[\w ,'-]+$/;
   
     if (!reg.test(address)) {
       return false;
@@ -203,7 +203,7 @@ function validateAddress(address) {
 * @param {string} city
 */
 function validateCity(city) {
-    var reg = /^([a-zA-Z\u0080-\u024F]+(?:. |-| |'))*[a-zA-Z\u0080-\u024F]*$/;
+    var reg = /^([a-zA-Z\u0080-\u024F]+(-' ))*[a-zA-Z\u0080-\u024F]+$/;
   
     if (!reg.test(city)) {
       return false;
