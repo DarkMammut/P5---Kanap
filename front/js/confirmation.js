@@ -1,4 +1,4 @@
-const idOrder=window.location.search.split("?order=").join("");
+const idOrder=window.location.search.split("?order=").join(""); //get orderID from URL
 console.log(idOrder);
 
-document.getElementById("orderId").innerText = idOrder;
+document.getElementById("orderId").innerText = idOrder; //add URL in HTML

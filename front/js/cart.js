@@ -179,7 +179,7 @@ function writeHTML(findProduct,product,productKey) {
 * @param {string} name
 */
 function validateNames(name) {
-    var reg = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+    var reg = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/;
   
     if (!reg.test(name)) {
       return false;
@@ -215,7 +215,7 @@ function validateCity(city) {
 * @param {string} email
 */
 function validateEmail(email) {
-    var reg = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+    var reg = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     if(!reg.test(email)) {
         return false;
     };
@@ -346,7 +346,7 @@ const validateForm = async () => {
 
                 let order = {};
 
-                const res = async () => {
+                const res = async () => { //fetch post 
                     await fetch("http://localhost:3000/api/products/order", {
                         method: "POST",
                         headers: {
@@ -355,7 +355,7 @@ const validateForm = async () => {
                         },
                         body: JSON.stringify(clientOrder)
                     })
-                    .then((res) => res.json())
+                    .then((res) => res.json()) //get response of server and keep result in order
                     .then((promise)=> {
                         order = promise;
                         console.log(order);
@@ -363,11 +363,12 @@ const validateForm = async () => {
                     });
                 ;}
 
-                const ordering = async () => {
+                const ordering = async () => { //get OrderId from server and put in url for page confirmation
                     await res();
 
                     if(order) {
                         console.log(order.orderId)
+                        localStorage.clear();
                         url = `./confirmation.html?order=${order.orderId}`;
                         window.location.href = url;
                     } else {
@@ -375,12 +376,12 @@ const validateForm = async () => {
                     };
                 };
 
-                ordering();
+                ordering(); //call const ordering
 
             } else { alert("merci de remplir le formulaire de contact"); };
         } else { alert("votre panier est vide"); }
     });   
 };
 
-cartDisplay();
-validateForm();
+cartDisplay(); //call const cartDisplay
+validateForm(); //call const validateForm
