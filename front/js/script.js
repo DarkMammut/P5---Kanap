@@ -7,7 +7,6 @@ const fetchProduct = async () => {
         .then((res) => res.json())
         .then((promise)=> {
             productData = promise;
-            console.log(productData);
         }
     );
 };

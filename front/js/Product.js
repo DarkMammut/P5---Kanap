@@ -1,6 +1,5 @@
 /*get product-id in URL*/
 const idProduct=window.location.search.split("?id=").join("");
-console.log(idProduct)
 
 let product = {}; //create an object//
 
@@ -11,7 +10,6 @@ const fetchProduct = async () => {
         .then((res) => res.json())
         .then((promise)=> {
             product = promise;
-            console.log(product);
         }
     );
 };
@@ -38,7 +36,6 @@ function getCart() {
 
 const addCart = () => {
     let button = document.getElementById('addToCart');
-    console.log(idProduct);
     button.addEventListener("click",() => {
         let quantity = Number(document.getElementById("quantity").value);
         let color = document.getElementById("colors").value;
@@ -47,10 +44,9 @@ const addCart = () => {
         let findProduct = cart[key];
 
         if(color !== "") {
-            if(quantity > 0) {
+            if(quantity > 0 && quantity < 101) {
                 if(!cart) {cart={}};
                 if(findProduct) {
-                    console.log(findProduct);
                     cart[key].quantity += quantity;
                 } else {
                     cart[key] = {
@@ -60,14 +56,13 @@ const addCart = () => {
                     };
                 };
             }else {
-                alert("Merci d'indiquer une quantité supérieur à 0")
+                alert("Merci d'indiquer une quantité entre 1 et 100.")
             };
         } else {
             alert("Merci d'indiquer une couleur.")
         };
         saveCart(cart);
-
-        console.log(cart);
+        alert("L'article a été ajouté à votre panier.")
     });
 };
 
@@ -84,8 +79,6 @@ async function productDisplay() {
     document.getElementById('title').innerText = product.name;
     document.getElementById('description').innerText = product.description;
     document.getElementById('price').innerText = product.price;
-
-    console.log(product.colors)
 
     product.colors.forEach((color) => {
         let createOption = document.createElement("option");

@@ -61,9 +61,14 @@ function deleteItem(divDelete,key) {
 function changeQuantity(input,key) {
     input.addEventListener("change",function(event) {
         let cart = getCart();
-        cart[key].quantity = Number(event.target.value);
-        saveCart(cart);
-        calculateTotal(cart);
+            if (event.target.value > 0 && event.target.value <101) {
+            cart[key].quantity = Number(event.target.value);
+            saveCart(cart);
+            calculateTotal(cart);
+            } else { 
+                event.target.value = cart[key].quantity;
+                alert("veuillez renseigner une valur comprise entre 1 et 100");
+            }
     });
 }
 
@@ -191,7 +196,7 @@ function validateNames(name) {
 * @param {string} address
 */
 function validateAddress(address) {
-    var reg = /^[a-zA-Z ,'-]+$/;
+    var reg = /^[\w ,'-]+$/;
   
     if (!reg.test(address)) {
       return false;
@@ -223,12 +228,9 @@ function validateEmail(email) {
 
 const cartDisplay = async () => {
     let cart = getCart();
-    console.log(cart);
 
     for (const [key, value] of Object.entries(cart)) { //for each product in cart: find it in server and add HTML
         let findProduct = await fetchProduct(value._id);
-        console.log(value);
-        console.log(key)
         writeHTML(findProduct,value,key);
     };
 
@@ -317,7 +319,6 @@ const validateForm = async () => {
             } else {
                 document.getElementById("emailErrorMsg").innerText = "";
                 contact.email = email;
-                console.log(contact);
             };
         } else {
             document.getElementById("emailErrorMsg").innerText = "merci de renseigner une adresse email";
@@ -325,7 +326,7 @@ const validateForm = async () => {
         };
     });
 
-    document.getElementById("order").addEventListener("click", function(event) {
+    document.getElementById("order").addEventListener("click", async function(event) {
         event.preventDefault(); //do not allow to change URL
         let cart = getCart();
         if (Object.keys(cart).length > 0) {
@@ -342,41 +343,24 @@ const validateForm = async () => {
                     products: orderProducts,
                 };
 
-                console.log(clientOrder);
+                let res = await fetch("http://localhost:3000/api/products/order", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(clientOrder)
+                })
 
-                let order = {};
+                let order = await res.json() //get response of server and keep result in order
 
-                const res = async () => { //fetch post 
-                    await fetch("http://localhost:3000/api/products/order", {
-                        method: "POST",
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(clientOrder)
-                    })
-                    .then((res) => res.json()) //get response of server and keep result in order
-                    .then((promise)=> {
-                        order = promise;
-                        console.log(order);
-                        console.log("la requête est opérationelle.");
-                    });
-                ;}
-
-                const ordering = async () => { //get OrderId from server and put in url for page confirmation
-                    await res();
-
-                    if(order) {
-                        console.log(order.orderId)
-                        localStorage.clear();
-                        url = `./confirmation.html?order=${order.orderId}`;
-                        window.location.href = url;
-                    } else {
-                        alert("Une erreur est survenue. Veuillez réessayer ultérieurement.");
-                    };
+                if(order) {
+                    localStorage.clear();
+                    url = `./confirmation.html?order=${order.orderId}`;
+                    window.location.href = url;
+                } else {
+                    alert("Une erreur est survenue. Veuillez réessayer ultérieurement.");
                 };
-
-                ordering(); //call const ordering
 
             } else { alert("merci de remplir le formulaire de contact"); };
         } else { alert("votre panier est vide"); }
